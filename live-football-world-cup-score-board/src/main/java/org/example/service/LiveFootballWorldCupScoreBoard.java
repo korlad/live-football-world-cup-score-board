@@ -65,6 +65,13 @@ public class LiveFootballWorldCupScoreBoard {
     }
 
     /**
+     * Remove game from live board
+     * @param matchId - The id of the match
+     */
+    public void finishMatch(Integer matchId) {
+    }
+
+    /**
      * Get live board summary with valid order
      */
     public List<Match> summary() {

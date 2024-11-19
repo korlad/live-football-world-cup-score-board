@@ -105,4 +105,21 @@ public class LiveFootballWorldCupScoreBoardTest {
         Assertions.assertEquals("Brazil", match.getAwayTeam().getName());
     }
 
+    @Test
+    @Description("Finish match should remove match from live board")
+    public void finishMatchShouldRemoveMatchFromLiveBoard() {
+        Integer id = footballGame.newMatch("Mexico", "Canada");
+        footballGame.finishMatch(id);
+        Assertions.assertTrue(footballGame.summary().isEmpty());
+    }
+
+    @Test
+    @Description("Finish match should throw exception for unknown match id")
+    public void finishMatchShouldThrowExceptionForInvalidMatchId() {
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            footballGame.finishMatch(1);
+        });
+        Assertions.assertEquals("Match id 1 not found", exception.getMessage());
+    }
+
 }
