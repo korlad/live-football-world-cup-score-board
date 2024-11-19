@@ -53,6 +53,10 @@ public class LiveFootballWorldCupScoreBoard {
         return matchId;
     }
 
+    public void updatePoint(Integer matchId, Integer homeTeamScore, Integer awayTeamScore) {
+
+    }
+
     /**
      * Get live board summary with valid order
      */

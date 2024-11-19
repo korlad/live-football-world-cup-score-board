@@ -61,4 +61,39 @@ public class LiveFootballWorldCupScoreBoardTest {
         Assertions.assertEquals("homeTeamName and awayTeamName can not be empty", exception.getMessage());
     }
 
+    @Test
+    @Description("Update Point should game score properly")
+    public void updatePointShouldUpdateGameScore() {
+        Integer id = footballGame.newMatch("Mexico", "Canada");
+        footballGame.updatePoint(id, 1,2);
+        Match match = footballGame.summary().get(0);
+        Assertions.assertEquals(1, match.getHomeTeam().getScore());
+        Assertions.assertEquals(2, match.getAwayTeam().getScore());
+    }
+
+    @Test
+    @Description("Update Point should change live board position based on total score")
+    public void updatePointShouldUpdateGameScoreAndMoveHigherBasedOnTotalScore() {
+        Integer id = footballGame.newMatch("Mexico", "Canada");
+        Integer id2 = footballGame.newMatch("Spain", "Brazil");
+        footballGame.updatePoint(id, 1,2);
+        Match match = footballGame.summary().get(0);
+        Assertions.assertEquals("Mexico", match.getHomeTeam().getName());
+        Assertions.assertEquals("Canada", match.getAwayTeam().getName());
+        Assertions.assertEquals(1, match.getHomeTeam().getScore());
+        Assertions.assertEquals(2, match.getAwayTeam().getScore());
+    }
+
+    @Test
+    @Description("Update Point should change live board position based on most recent start when total score are same")
+    public void updatePointShouldUpdateGameScoreAndMoveHigherBasedOnRecentStartWhenTotalScoreSame() {
+        Integer id = footballGame.newMatch("Mexico", "Canada");
+        Integer id2 = footballGame.newMatch("Spain", "Brazil");
+        footballGame.updatePoint(id, 1,2);
+        footballGame.updatePoint(id2, 1,2);
+        Match match = footballGame.summary().get(0);
+        Assertions.assertEquals("Spain", match.getHomeTeam().getName());
+        Assertions.assertEquals("Brazil", match.getAwayTeam().getName());
+    }
+
 }
