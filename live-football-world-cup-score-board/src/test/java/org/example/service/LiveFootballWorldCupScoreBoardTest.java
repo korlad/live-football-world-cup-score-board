@@ -72,6 +72,15 @@ public class LiveFootballWorldCupScoreBoardTest {
     }
 
     @Test
+    @Description("Update Point should throw exception for unknown match id")
+    public void updatePointShouldNotUpdateGameScoreForInvalidMatchId() {
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            footballGame.updatePoint(1, 1,2);
+        });
+        Assertions.assertEquals("Match id 1 not found", exception.getMessage());
+    }
+
+    @Test
     @Description("Update Point should change live board position based on total score")
     public void updatePointShouldUpdateGameScoreAndMoveHigherBasedOnTotalScore() {
         Integer id = footballGame.newMatch("Mexico", "Canada");
