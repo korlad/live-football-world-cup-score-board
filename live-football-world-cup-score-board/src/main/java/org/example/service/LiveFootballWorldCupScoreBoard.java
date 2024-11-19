@@ -16,11 +16,85 @@ import java.util.stream.Collectors;
  */
 public class LiveFootballWorldCupScoreBoard {
 
+    /**
+     * Represent live score board for football games
+     */
+    private final List<Integer> scoreBoard = Collections.synchronizedList(new LinkedList<>());
+
+    /**
+     * Store match information
+     */
+    private final Map<Integer, Match> matches = Collections.synchronizedMap(new HashMap<>());
+
+    /**
+     * Add a new match to the system, generate id for the match and synchronize score board
+     * @param homeTeamName - The name of the participating home team
+     * @param awayTeamName - The name of the participating away team
+     * @return matchId - The system generated id for the newly added match
+     */
     public Integer newMatch(String homeTeamName, String awayTeamName) {
-        return null;
+        if(homeTeamName == null || awayTeamName == null || homeTeamName.isBlank() || awayTeamName.isBlank()) {
+            throw new IllegalArgumentException("homeTeamName and awayTeamName can not be empty");
+        }
+        if(homeTeamName.equals(awayTeamName)) {
+            throw new IllegalArgumentException("Home and away team name should be different");
+        }
+        if(isTeamInOngoingMatch(homeTeamName)) {
+            throw new IllegalArgumentException(homeTeamName+" team game is still ongoing");
+        }
+        if(isTeamInOngoingMatch(awayTeamName)) {
+            throw new IllegalArgumentException(awayTeamName+" team game is still ongoing");
+        }
+        //generate match id for the new match
+        Integer matchId = matches.size() + 1 ;
+        matches.put(matchId, new Match(matchId, new Team(homeTeamName), new Team(awayTeamName)));
+        //synchronize live broad for newly added match
+        syncScoreBoard(matchId);
+        return matchId;
     }
 
+    /**
+     * Get live board summary with valid order
+     */
     public List<Match> summary() {
-        return null;
+        return scoreBoard.stream()
+                .map(matches::get)
+                .collect(Collectors.toList());
     }
+
+    /**
+     * Check given team name are in ongoing match or not
+     * @param teamName - name of the team
+     * @return found - true when team name found in ongoing match
+     */
+    private boolean isTeamInOngoingMatch(String teamName) {
+        for (Integer id : scoreBoard) {
+            if(teamName.equals(matches.get(id).getHomeTeam().getName()) ||
+                    teamName.equals(matches.get(id).getAwayTeam().getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Synchronize live board for any game update
+     * @param matchId - the id of the match
+     */
+    private void syncScoreBoard(Integer matchId) {
+        //find correct position the match
+        int position = getPositionOnScoreBoard(matchId);
+        //update match position on the live board
+        scoreBoard.add(position, matchId);
+    }
+
+    /**
+     * Find the perfect position in live board for a match
+     * @param matchId - the id of the match
+     * @return position - the appropriate position for the match on live board
+     */
+    private Integer getPositionOnScoreBoard(Integer matchId) {
+        return countingBoard.size();    
+    }
+
 }
