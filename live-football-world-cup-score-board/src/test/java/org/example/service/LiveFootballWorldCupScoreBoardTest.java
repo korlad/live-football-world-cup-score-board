@@ -81,6 +81,16 @@ public class LiveFootballWorldCupScoreBoardTest {
     }
 
     @Test
+    @Description("Update Point should throw exception for negative score value")
+    public void updatePointShouldNotUpdateGameScoreForNegativeScoreValue() {
+        Integer id = footballGame.newMatch("Mexico", "Canada");
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            footballGame.updatePoint(id, -1,2);
+        });
+        Assertions.assertEquals("Score can't be negative.", exception.getMessage());
+    }
+
+    @Test
     @Description("Update Point should change live board position based on total score")
     public void updatePointShouldUpdateGameScoreAndMoveHigherBasedOnTotalScore() {
         Integer id = footballGame.newMatch("Mexico", "Canada");
@@ -120,6 +130,27 @@ public class LiveFootballWorldCupScoreBoardTest {
             footballGame.finishMatch(1);
         });
         Assertions.assertEquals("Match id 1 not found", exception.getMessage());
+    }
+
+    @Test
+    @Description("Summary should initially empty")
+    public void summaryShouldInitiallyEmpty() {
+        Assertions.assertTrue(footballGame.summary().isEmpty());
+    }
+
+    @Test
+    @Description("Summary should return matches in order based on total score and most recently started match")
+    public void summaryShouldProvideMatchList() {
+        Integer id = footballGame.newMatch("Mexico", "Canada");
+        Integer id2 = footballGame.newMatch("Spain", "Brazil");
+        footballGame.updatePoint(id, 1,2);
+        footballGame.updatePoint(id2, 1,2);
+        List<Match> matches = footballGame.summary();
+        Assertions.assertFalse(matches.isEmpty());
+        Assertions.assertEquals("Spain", matches.get(0).getHomeTeam().getName());
+        Assertions.assertEquals("Brazil", matches.get(0).getAwayTeam().getName());
+        Assertions.assertEquals("Mexico", matches.get(1).getHomeTeam().getName());
+        Assertions.assertEquals("Canada", matches.get(1).getAwayTeam().getName());
     }
 
 }
