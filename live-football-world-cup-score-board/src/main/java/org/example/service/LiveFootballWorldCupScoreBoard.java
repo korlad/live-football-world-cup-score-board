@@ -69,6 +69,10 @@ public class LiveFootballWorldCupScoreBoard {
      * @param matchId - The id of the match
      */
     public void finishMatch(Integer matchId) {
+        if(! matches.containsKey(matchId)) {
+            throw new IllegalArgumentException("Match id "+matchId+" not found");
+        }
+        scoreBoard.remove(matchId);
     }
 
     /**
