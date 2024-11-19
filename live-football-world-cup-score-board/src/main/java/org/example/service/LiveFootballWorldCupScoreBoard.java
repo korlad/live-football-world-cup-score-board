@@ -54,7 +54,14 @@ public class LiveFootballWorldCupScoreBoard {
     }
 
     public void updatePoint(Integer matchId, Integer homeTeamScore, Integer awayTeamScore) {
-
+        if(! matches.containsKey(matchId)) {
+            throw new IllegalArgumentException("Match id "+matchId+" not found");
+        }
+        //update score for the participating team
+        matches.get(matchId).getHomeTeam().setScore(homeTeamScore);
+        matches.get(matchId).getAwayTeam().setScore(awayTeamScore);
+        //synchronize live broad for score update
+        syncScoreBoard(matchId);
     }
 
     /**
@@ -98,7 +105,24 @@ public class LiveFootballWorldCupScoreBoard {
      * @return position - the appropriate position for the match on live board
      */
     private Integer getPositionOnScoreBoard(Integer matchId) {
-        return countingBoard.size();    
+        //remove if it already in live, because we need to reposition it
+        if(scoreBoard.contains(matchId))
+            scoreBoard.remove(matchId);
+        int position = 0;
+        for(Integer id : scoreBoard) {
+            //Check total score for the match
+            if(matches.get(matchId).getHomeTeam().getScore() + matches.get(matchId).getAwayTeam().getScore() >
+                    matches.get(id).getHomeTeam().getScore() + matches.get(id).getAwayTeam().getScore() ) {
+                return position;
+            }
+            //Check recently started match when total score are same
+            else if(matches.get(matchId).getHomeTeam().getScore() + matches.get(matchId).getAwayTeam().getScore() ==
+                    matches.get(id).getHomeTeam().getScore() + matches.get(id).getAwayTeam().getScore() ) {
+                return matchId >id ? position : position +1;
+            }
+            position++;
+        }
+        return position;    
     }
 
 }
