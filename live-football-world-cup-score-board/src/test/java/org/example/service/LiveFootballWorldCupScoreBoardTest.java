@@ -51,5 +51,14 @@ public class LiveFootballWorldCupScoreBoardTest {
         });
         Assertions.assertEquals("Home and away team name should be different", exception.getMessage());
     }
-    
+
+    @Test
+    @Description("New match should not start where home and away team name are empty")
+    public void newMatchShouldNotStartWithEmptyTeamName() {
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            footballGame.newMatch(null, "");
+        });
+        Assertions.assertEquals("homeTeamName and awayTeamName can not be empty", exception.getMessage());
+    }
+
 }
